@@ -1,0 +1,32 @@
+# Ignorar archivos que no son necesarios en el build de Docker
+# Esto hace que el build sea más rápido
+
+# Maven targets (los .jar se construyen DENTRO del contenedor)
+**/target/
+**/!target/*.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.code-workspace
+
+# Git
+.git/
+.gitignore
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (Angular)
+frontend-angular/node_modules/
+frontend-angular/dist/
+frontend-angular/.angular/
+
+# Scripts locales (no se necesitan en el contenedor)
+iniciar-microservicios.ps1

@@ -1,0 +1,143 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <span class="header-tag">REGISTRO // BASE DE DATOS</span>
+      <h1 class="page-title">Catálogo de Productos</h1>
+      <p class="page-desc">FERRETERÍA MOLINA — INVENTARIO SEC-01</p>
+    </div>
+    <button class="btn-cta" (click)="abrirModal()">
+      <span class="material-symbols-outlined">add</span>
+      REGISTRAR PRODUCTO
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <div class="filter-left">
+      <span class="filter-label">Vista de Datos</span>
+      <div class="filter-tabs">
+        <button class="filter-tab" [class.active]="!filtroCategoria" (click)="filtroCategoria='';filtrar()">TODOS</button>
+        @for (cat of categorias(); track cat) {
+          <button class="filter-tab" [class.active]="filtroCategoria===cat" (click)="filtroCategoria=cat;filtrar()">{{ cat | uppercase }}</button>
+        }
+      </div>
+    </div>
+    <div class="search-wrap">
+      <span class="material-symbols-outlined">search</span>
+      <input type="text" placeholder="BUSCAR PRODUCTO..." [(ngModel)]="busqueda" (input)="filtrar()" />
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-panel">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>PRODUCTO / SKU</th>
+            <th>CATEGORÍA</th>
+            <th>PRECIO</th>
+            <th>STOCK</th>
+            <th>PROVEEDOR</th>
+            <th class="th-right">OPERACIONES</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of productosFiltrados(); track p.idProducto) {
+            <tr class="row-hover">
+              <td>
+                <div class="prod-name">{{ p.nombre }}</div>
+                <div class="prod-sku">SKU: PRD-{{ p.idProducto }}</div>
+              </td>
+              <td><span class="cat-tag">{{ p.categoria }}</span></td>
+              <td class="mono">S/ {{ p.precio.toFixed(2) }}</td>
+              <td>
+                <span class="stock-tag" [class.ok]="p.stock > 5" [class.low]="p.stock <= 5 && p.stock > 0" [class.out]="p.stock === 0">
+                  <span class="stock-dot"></span>
+                  {{ p.stock }} UDS
+                </span>
+              </td>
+              <td class="text-dim">{{ getProveedorNombre(p.idProveedor) }}</td>
+              <td class="td-right">
+                <div class="row-actions">
+                  <button class="act-btn" (click)="editar(p)"><span class="material-symbols-outlined">edit</span></button>
+                  <button class="act-btn del" (click)="eliminar(p.idProducto)"><span class="material-symbols-outlined">delete_outline</span></button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="6" class="empty-td">No se encontraron productos</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="table-footer">
+      <span class="table-count">Mostrando {{ productosFiltrados().length }} de {{ productos().length }} registros</span>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+@if (modalAbierto()) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-accent"></div>
+      <div class="modal-head">
+        <h2>{{ editando() ? 'Editar' : 'Nuevo' }} Producto</h2>
+        <button class="modal-close" (click)="cerrarModal()">×</button>
+      </div>
+      <form (ngSubmit)="guardar()" class="modal-body">
+        <div class="fg">
+          <label>NOMBRE DEL PRODUCTO</label>
+          <input type="text" [(ngModel)]="form.nombre" name="nombre" required />
+        </div>
+        <div class="fg-row">
+          <div class="fg">
+            <label>CATEGORÍA</label>
+            <select [(ngModel)]="form.categoria" name="categoria" required>
+              <option value="" disabled>Seleccione categoría...</option>
+              @for (cat of categorias(); track cat) {
+                <option [value]="cat">{{ cat }}</option>
+              }
+              <option value="__nueva__">+ Nueva categoría...</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>PRECIO (S/)</label>
+            <input type="number" [(ngModel)]="form.precio" name="precio" required step="0.01" min="0" />
+          </div>
+        </div>
+
+        @if (form.categoria === '__nueva__') {
+          <div class="fg">
+            <label>NUEVA CATEGORÍA</label>
+            <input type="text" [(ngModel)]="nuevaCategoria" name="nuevaCategoria" placeholder="Escriba el nombre de la nueva categoría..." required />
+          </div>
+        }
+
+        <div class="fg-row">
+          <div class="fg">
+            <label>STOCK</label>
+            <input type="number" [(ngModel)]="form.stock" name="stock" required min="0" />
+          </div>
+          <div class="fg">
+            <label>PROVEEDOR</label>
+            <select [(ngModel)]="form.idProveedor" name="idProveedor" required>
+              <option [ngValue]="0" disabled>Seleccione...</option>
+              @for (prov of proveedores(); track prov.idProveedor) {
+                <option [ngValue]="prov.idProveedor">{{ prov.razonSocial }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" (click)="cerrarModal()">CANCELAR</button>
+          <button type="submit" class="btn-cta">
+            <span class="material-symbols-outlined">{{ editando() ? 'sync' : 'add' }}</span>
+            {{ editando() ? 'ACTUALIZAR' : 'REGISTRAR' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

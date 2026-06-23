@@ -1,0 +1,239 @@
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  VISTA 1: Lista de usuarios (grid de tarjetas)          -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (!vistaRegistro()) {
+<div class="page" >
+  <div class="page-header">
+    <div>
+      <span class="header-tag">CONTROL DE ACCESO // ADMIN</span>
+      <h1 class="page-title">Gestión de <span class="text-accent">Usuarios</span></h1>
+      <p class="page-desc">MÓDULO DE AUTORIZACIÓN SEC-ADMIN</p>
+    </div>
+    <button class="btn-cta" (click)="abrirRegistro()">
+      <span class="material-symbols-outlined">person_add</span>NUEVO OPERADOR
+    </button>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="error-banner" style="margin-bottom: 2rem; padding: 1rem; background-color: rgba(255,50,50,0.1); border-left: 4px solid #ff3232; color: #ff3232;">
+      <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 0.5rem;">error</span>
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <div class="users-grid">
+    @for (u of usuarios(); track u.idUsuario) {
+      <div class="user-card">
+        <div class="user-top">
+          <div class="user-avatar" [class.admin]="u.rol==='admin'">
+            @if (u.foto) {
+              <img [src]="u.foto" alt="Avatar">
+            } @else {
+              {{ u.nombre.charAt(0) }}
+            }
+          </div>
+          <div class="user-actions">
+            <button class="act-btn" (click)="editar(u)"><span class="material-symbols-outlined">edit</span></button>
+            <button class="act-btn del" (click)="eliminar(u.idUsuario)"><span class="material-symbols-outlined">delete_outline</span></button>
+          </div>
+        </div>
+        <h3 class="user-name">{{ u.nombre }}</h3>
+        <p class="user-email">{{ u.correo }}</p>
+        <div class="user-role" [class.admin]="u.rol==='admin'">
+          <span class="role-dot"></span>
+          {{ u.rol === 'admin' ? 'ADMINISTRADOR' : 'EMPLEADO' }}
+        </div>
+      </div>
+    } @empty {
+      <p class="empty-msg">No hay usuarios registrados</p>
+    }
+  </div>
+</div>
+}
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  VISTA 2: Formulario de registro (estilo industrial)     -->
+<!-- ══════════════════════════════════════════════════════════ -->
+@if (vistaRegistro()) {
+<div class="page register-view">
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <div class="header-tag-row">
+        <span class="header-line"></span>
+        <span class="header-tag">Human Resources Module</span>
+      </div>
+      <h1 class="page-title">REGISTRO DE <span class="text-accent">PERSONAL</span></h1>
+      <p class="page-desc">Protocolo de credenciales para operadores del sistema.</p>
+    </div>
+    <button class="btn-back" (click)="cancelar()">
+      <span class="material-symbols-outlined">arrow_back</span>VOLVER
+    </button>
+  </div>
+
+  <!-- Split Layout -->
+  <div class="register-grid">
+    <!-- Scan Line Effect -->
+    <div class="scan-overlay">
+      <div class="scan-line"></div>
+    </div>
+
+    <!-- Left: Form -->
+    <div class="register-form-col">
+      <div class="glass-card">
+        <div class="corner-accent corner-tl"></div>
+        <div class="corner-accent corner-tr"></div>
+        <div class="corner-accent corner-bl"></div>
+        <div class="corner-accent corner-br"></div>
+
+        <!-- Section Header -->
+        <div class="section-header">
+          <div class="section-icon">
+            <span class="material-symbols-outlined">fingerprint</span>
+          </div>
+          <div>
+            <h3 class="section-title">Datos de Acceso</h3>
+            <p class="section-sub">Protocol // Security_Layer_01</p>
+          </div>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="error-banner" style="margin-bottom: 1.5rem; padding: 1rem; background-color: rgba(255,50,50,0.1); border-left: 4px solid #ff3232; color: #ff3232;">
+            <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 0.5rem;">error</span>
+            {{ errorMessage() }}
+          </div>
+        }
+
+        <form (ngSubmit)="guardar()" class="form-grid">
+          <!-- Nombre -->
+          <div class="fg">
+            <label>
+              <span>Nombre Completo</span>
+              <span class="field-code">01_IDENT</span>
+            </label>
+            <input type="text" [(ngModel)]="form.nombre" name="nombre" required placeholder="INGRESAR NOMBRE" />
+          </div>
+
+          <!-- Correo -->
+          <div class="fg">
+            <label>
+              <span>Correo Electrónico</span>
+              <span class="field-code">02_EMAIL</span>
+            </label>
+            <input type="email" [(ngModel)]="form.correo" name="correo" required placeholder="OPERADOR@SISTEMA.COM" />
+          </div>
+
+          <!-- Contraseña -->
+          <div class="fg">
+            <label>
+              <span>Código de Acceso</span>
+              <span class="field-code">03_KEY</span>
+            </label>
+            <div class="input-wrapper">
+              <input [type]="showPassword() ? 'text' : 'password'" [(ngModel)]="form.clave" name="clave" [required]="!editandoFlag()" placeholder="••••••••" />
+              <button type="button" class="toggle-pass" (click)="togglePassword()">
+                <span class="material-symbols-outlined">{{ showPassword() ? 'visibility' : 'visibility_off' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Rol -->
+          <div class="fg">
+            <label>
+              <span>Asignación de Rol</span>
+              <span class="field-code">04_RANK</span>
+            </label>
+            <div class="select-wrapper">
+              <select [(ngModel)]="form.rol" name="rol" required>
+                <option value="admin">ADMINISTRADOR</option>
+                <option value="empleado">EMPLEADO</option>
+              </select>
+              <span class="material-symbols-outlined select-icon">unfold_more</span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="form-footer">
+            <div class="footer-meta">
+              <div class="meta-item">
+                <span class="meta-label">Encryption</span>
+                <span class="meta-value">BCrypt_V2</span>
+              </div>
+              <div class="meta-divider"></div>
+              <div class="meta-item">
+                <span class="meta-label">Status</span>
+                <span class="meta-value">{{ editandoFlag() ? 'EDIT_MODE' : 'NEW_ENTRY' }}</span>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn-ghost" (click)="cancelar()">CANCELAR</button>
+              <button type="submit" class="btn-cta" [disabled]="guardando()">
+                <span class="material-symbols-outlined">{{ editandoFlag() ? 'sync' : 'cloud_upload' }}</span>
+                {{ guardando() ? 'PROCESANDO...' : (editandoFlag() ? 'ACTUALIZAR' : 'REGISTRAR') }}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right: Photo Upload & Meta -->
+    <div class="register-side-col">
+      <!-- Profile Photo -->
+      <div class="glass-card photo-card">
+        <div class="corner-accent corner-tr opacity-40"></div>
+        <div class="corner-accent corner-bl opacity-40"></div>
+
+        <div class="photo-upload-area" (click)="fileInput.click()">
+          @if (fotoPreview()) {
+            <img [src]="fotoPreview()" alt="Preview" class="photo-preview" />
+            <button type="button" class="photo-remove" (click)="removeFoto(); $event.stopPropagation()">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          } @else {
+            <div class="photo-placeholder">
+              <span class="material-symbols-outlined photo-icon">photo_camera</span>
+              <span class="photo-label">Upload_Biometric</span>
+            </div>
+          }
+          <input #fileInput type="file" accept="image/*" (change)="onFotoSelected($event)" hidden />
+        </div>
+
+        <div class="photo-status">
+          <div class="status-label">Status: {{ fotoPreview() ? 'LOADED' : 'PENDING_ENTRY' }}</div>
+          <div class="status-bar">
+            <div class="status-fill" [style.width]="fotoPreview() ? '100%' : '25%'" [class.complete]="fotoPreview()"></div>
+          </div>
+        </div>
+
+        <div class="meta-list">
+          <div class="meta-row">
+            <span class="meta-key">Protocol</span>
+            <span class="meta-val">BIO-SEC-92</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-key">Max_Size</span>
+            <span class="meta-val">2MB</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-key">Format</span>
+            <span class="meta-val">JPG / PNG</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Log -->
+      <div class="sys-log-card">
+        <div class="sys-log-content">
+          [SYS_BOOT_SEQUENCE]: OK<br/>
+          [AUTH_MODULE]: VERIFIED<br/>
+          [ENCRYPTION]: ACTIVATED<br/>
+          [USER_RECORDS]: {{ usuarios().length }} ACTIVE<br/>
+          // STATUS: STANDBY
+        </div>
+        <div class="sys-log-pulse">SYSTEM_LISTENING...</div>
+      </div>
+    </div>
+  </div>
+</div>
+}

@@ -1,0 +1,219 @@
+<div class="page">
+  <div class="page-header">
+    <div class="header-left-block">
+      <div class="header-accent"></div>
+      <div>
+        <h1 class="page-title">Terminal de Registro // VENTAS</h1>
+        <p class="page-desc">{{ vista() === 'pos' ? 'CATÁLOGO // SOLO STOCK ACTIVO' : 'HISTORIAL DE TRANSACCIONES' }}
+        </p>
+      </div>
+    </div>
+    <div class="header-tabs">
+      <button class="tab" [class.active]="vista() === 'pos'" (click)="vista.set('pos')">
+        <span class="material-symbols-outlined">point_of_sale</span> NUEVA VENTA
+      </button>
+      <button class="tab" [class.active]="vista() === 'historial'" (click)="vista.set('historial')">
+        <span class="material-symbols-outlined">receipt_long</span> HISTORIAL
+      </button>
+    </div>
+  </div>
+
+  @if (vista() === 'pos') {
+  <div class="pos-layout">
+    <!-- Left: Products -->
+    <section class="pos-products">
+      <!-- Category Filters -->
+      <div class="cat-filters">
+        <button class="cat-btn" [class.active]="!filtroCat" (click)="filtroCat='';buscarProductos()">TODOS</button>
+        @for (cat of categorias(); track cat) {
+        <button class="cat-btn" [class.active]="filtroCat===cat" (click)="filtroCat=cat;buscarProductos()">{{ cat
+          }}</button>
+        }
+      </div>
+
+      <!-- Search -->
+      <div class="prod-search">
+        <span class="material-symbols-outlined">search</span>
+        <input type="text" placeholder="BUSCAR PRODUCTO POR SKU O NOMBRE..." [(ngModel)]="busquedaProducto"
+          (input)="buscarProductos()" />
+      </div>
+
+      <!-- Product Cards -->
+      <div class="prod-grid">
+        @for (p of productosDisponibles(); track p.idProducto) {
+        <div class="prod-card" [class.disabled]="p.stock <= 0" (click)="p.stock > 0 && agregarAlCarrito(p)">
+          <div class="prod-stock-tag" [class.low]="p.stock <= 5" [class.out]="p.stock <= 0">
+            STOCK: {{ p.stock > 0 ? (p.stock < 10 ? '0' + p.stock : p.stock) : '00' }} UDS </div>
+              <div class="prod-card-body">
+                <h3 class="prod-card-name">{{ p.nombre }}</h3>
+                <span class="prod-card-price">S/ {{ p.precio.toFixed(2) }}</span>
+                <p class="prod-card-sku">SKU: PRD-{{ p.idProducto }} // {{ p.categoria | uppercase }}</p>
+                <button class="prod-add-btn" [disabled]="p.stock <= 0">
+                  <span class="material-symbols-outlined">add_shopping_cart</span> AGREGAR
+                </button>
+              </div>
+              <div class="prod-corner"></div>
+          </div>
+          } @empty {
+          <p class="empty-prods">No se encontraron productos</p>
+          }
+        </div>
+
+        <!-- Customer Info -->
+        <div class="customer-bar">
+          <div class="customer-search">
+            <label>SELECCIÓN DE CLIENTE</label>
+            <div class="customer-input-wrap">
+              <span class="material-symbols-outlined">person_search</span>
+              <select [(ngModel)]="clienteSeleccionado" class="customer-select">
+                <option [ngValue]="0" disabled>SELECCIONE CLIENTE...</option>
+                @for (c of clientes(); track c.idCliente) {
+                <option [ngValue]="c.idCliente">{{ c.nombre }} — {{ c.dni }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+    </section>
+
+    <!-- Right: Cart -->
+    <section class="pos-cart">
+      <div class="cart-header">
+        <h2 class="cart-title">
+          <span class="material-symbols-outlined">shopping_basket</span>
+          RESUMEN DEL CARRITO
+        </h2>
+        <span class="cart-id">{{ carrito().length }} artículos</span>
+      </div>
+
+      <div class="cart-items">
+        @for (item of carrito(); track item.idProducto) {
+        <div class="cart-item">
+          <div class="cart-item-info">
+            <span class="cart-item-name">{{ item.nombre }}</span>
+            <span class="cart-item-price">S/ {{ item.precio.toFixed(2) }}</span>
+          </div>
+          <div class="cart-item-right">
+            <div class="qty-controls">
+              <button class="qty-btn" (click)="cambiarCantidad(item, -1)">
+                <span class="material-symbols-outlined">remove</span>
+              </button>
+              <span class="qty-val">{{ item.cantidad }}</span>
+              <button class="qty-btn" (click)="cambiarCantidad(item, 1)">
+                <span class="material-symbols-outlined">add</span>
+              </button>
+            </div>
+            <span class="cart-item-subtotal">S/ {{ item.subtotal.toFixed(2) }}</span>
+            <button class="del-btn" (click)="quitarDelCarrito(item.idProducto)">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </div>
+        </div>
+        } @empty {
+        <p class="empty-cart">El carrito está vacío</p>
+        }
+      </div>
+
+      <div class="cart-totals">
+        <div class="total-row"><span>Subtotal</span><span class="mono">S/ {{ totalCarrito().toFixed(2) }}</span></div>
+        <div class="total-row"><span>IGV (18%)</span><span class="mono">S/ {{ (totalCarrito() * 0.18).toFixed(2)
+            }}</span></div>
+        <div class="total-row main">
+          <span>MONTO TOTAL</span>
+          <span class="total-big">S/ {{ (totalCarrito() * 1.18).toFixed(2) }}</span>
+        </div>
+      </div>
+
+      <div class="cart-actions">
+        @if (carrito().length > 0 && clienteSeleccionado === 0) {
+        <p class="cart-warning">
+          <span class="material-symbols-outlined">warning</span>
+          Seleccione un cliente para procesar
+        </p>
+        }
+        <button class="btn-process" [disabled]="carrito().length === 0 || clienteSeleccionado === 0"
+          (click)="confirmarVenta()">
+          <span class="material-symbols-outlined">receipt_long</span>
+          PROCESAR VENTA
+          <div class="btn-shine"></div>
+        </button>
+      </div>
+
+      <div class="cart-branding">
+        <div class="brand-line"></div>
+        <span>FORGE & METRIC SYSTEM V.4.1</span>
+        <div class="brand-line"></div>
+      </div>
+    </section>
+  </div>
+  }
+
+  @if (vista() === 'historial') {
+  <div class="table-panel">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>FECHA</th>
+            <th>CLIENTE</th>
+            <th>VENDEDOR</th>
+            <th>TOTAL</th>
+            <th>DETALLES</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (v of ventas(); track v.idVenta) {
+          <tr>
+            <td><span class="id-tag">{{ v.idVenta }}</span></td>
+            <td class="mono">{{ v.fecha }}</td>
+            <td>{{ getClienteNombre(v.idCliente) }}</td>
+            <td class="text-dim">{{ getUsuarioNombre(v.idUsuario) }}</td>
+            <td class="total-cell">S/ {{ v.total.toFixed(2) }}</td>
+            <td><button class="detail-btn" (click)="verDetalle(v.idVenta)"><span
+                  class="material-symbols-outlined">visibility</span></button></td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="6" class="empty-td">Sin ventas registradas</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  @if (detalleVentaId()) {
+  <div class="detail-panel">
+    <div class="detail-head">
+      <h3>DETALLE {{ detalleVentaId() }}</h3><button class="modal-close" (click)="detalleVentaId.set(0)">×</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>PRODUCTO</th>
+          <th>CANTIDAD</th>
+          <th>SUBTOTAL</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (d of detallesVenta(); track d.idDetalle) {
+        <tr>
+          <td>{{ getProductoNombre(d.idProducto) }}</td>
+          <td class="mono">{{ d.cantidad }}</td>
+          <td class="total-cell">S/ {{ d.subtotal.toFixed(2) }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+  }
+</div>
+
+@if (ventaExitosa()) {
+<div class="toast-success">
+  <span class="material-symbols-outlined">check_circle</span>
+  TRANSACCIÓN PROCESADA EXITOSAMENTE
+</div>
+}

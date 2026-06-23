@@ -1,0 +1,11 @@
+D:\CIBERTEC\6toCiclo\Modulo02\DESARROLLO DE APLICACIONES WEB II\EVALUACIONES\PROYECTO\ProyectoFerreteria_DAWII\ms-clientes\src\main\java\com\ferreteria\clientes\exception\GlobalExceptionHandler.java
+D:\CIBERTEC\6toCiclo\Modulo02\DESARROLLO DE APLICACIONES WEB II\EVALUACIONES\PROYECTO\ProyectoFerreteria_DAWII\ms-clientes\src\main\java\com\ferreteria\clientes\exception\ErrorResponse.java
+D:\CIBERTEC\6toCiclo\Modulo02\DESARROLLO DE APLICACIONES WEB II\EVALUACIONES\PROYECTO\ProyectoFerreteria_DAWII\ms-clientes\src\main\java\com\ferreteria\clientes\MsClientesApplication.java
+D:\CIBERTEC\6toCiclo\Modulo02\DESARROLLO DE APLICACIONES WEB II\EVALUACIONES\PROYECTO\ProyectoFerreteria_DAWII\ms-clientes\src\main\java\com\ferreteria\clientes\entity\Cliente.java
+D:\CIBERTEC\6toCiclo\Modulo02\DESARROLLO DE APLICACIONES WEB II\EVALUACIONES\PROYECTO\ProyectoFerreteria_DAWII\ms-clientes\src\main\java\com\ferreteria\clientes\service\impl\ClienteServiceImpl.java
+D:\CIBERTEC\6toCiclo\Modulo02\DESARROLLO DE APLICACIONES WEB II\EVALUACIONES\PROYECTO\ProyectoFerreteria_DAWII\ms-clientes\src\main\java\com\ferreteria\clientes\dto\ClienteResponse.java
+D:\CIBERTEC\6toCiclo\Modulo02\DESARROLLO DE APLICACIONES WEB II\EVALUACIONES\PROYECTO\ProyectoFerreteria_DAWII\ms-clientes\src\main\java\com\ferreteria\clientes\controller\ClienteController.java
+D:\CIBERTEC\6toCiclo\Modulo02\DESARROLLO DE APLICACIONES WEB II\EVALUACIONES\PROYECTO\ProyectoFerreteria_DAWII\ms-clientes\src\main\java\com\ferreteria\clientes\exception\ResourceNotFoundException.java
+D:\CIBERTEC\6toCiclo\Modulo02\DESARROLLO DE APLICACIONES WEB II\EVALUACIONES\PROYECTO\ProyectoFerreteria_DAWII\ms-clientes\src\main\java\com\ferreteria\clientes\repository\ClienteRepository.java
+D:\CIBERTEC\6toCiclo\Modulo02\DESARROLLO DE APLICACIONES WEB II\EVALUACIONES\PROYECTO\ProyectoFerreteria_DAWII\ms-clientes\src\main\java\com\ferreteria\clientes\service\ClienteService.java
+D:\CIBERTEC\6toCiclo\Modulo02\DESARROLLO DE APLICACIONES WEB II\EVALUACIONES\PROYECTO\ProyectoFerreteria_DAWII\ms-clientes\src\main\java\com\ferreteria\clientes\dto\ClienteRequest.java

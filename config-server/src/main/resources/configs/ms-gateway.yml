@@ -1,0 +1,62 @@
+
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      # CORS global
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:4200"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+
+      # Rutas
+      routes:
+        # ms-auth: login público + gestión de usuarios (protegido)
+        - id: ms-auth-route
+          uri: lb://ms-auth
+          predicates:
+            - Path=/api/auth/**, /api/usuarios/**
+
+        # ms-clientes: gestión de clientes
+        - id: ms-clientes-route
+          uri: lb://ms-clientes
+          predicates:
+            - Path=/api/clientes/**
+
+        # ms-productos: productos y proveedores
+        - id: ms-productos-route
+          uri: lb://ms-productos
+          predicates:
+            - Path=/api/productos/**, /api/proveedores/**
+
+        # ms-ventas: ventas y devoluciones
+        - id: ms-ventas-route
+          uri: lb://ms-ventas
+          predicates:
+            - Path=/api/ventas/**, /api/devoluciones/**
+
+# JWT: mismo secret que ms-auth para validar tokens en el filtro global
+app:
+  jwt:
+    secret: ZmVycmV0ZXJpYS1tb2xpbmEtc2VjcmV0LWtleS1zdXBlci1zZWd1cmEtMjAyNg==
+
+logging:
+  level:
+    com.ferreteria.gateway: DEBUG
+    org.springframework.cloud.gateway.route: WARN
+    org.springframework.cloud.gateway.handler: WARN
+    org.springframework.cloud.gateway.filter: WARN
+    com.netflix.discovery: WARN
+    com.netflix.eureka: WARN
+    org.springframework.cloud.netflix: WARN

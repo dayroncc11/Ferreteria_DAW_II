@@ -1,0 +1,70 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <span class="header-tag">CADENA DE SUMINISTRO // BASE DE DATOS</span>
+      <h1 class="page-title">Proveedores</h1>
+      <p class="page-desc">FERRETERÍA MOLINA — RED DE PROVEEDORES SEC-03</p>
+    </div>
+    <button class="btn-cta" (click)="abrirModal()">
+      <span class="material-symbols-outlined">add</span> REGISTRAR PROVEEDOR
+    </button>
+  </div>
+
+  <div class="table-panel">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>EMPRESA / ID</th>
+            <th>RUC</th>
+            <th>TELÉFONO</th>
+            <th class="th-right">OPERACIONES</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of proveedores(); track p.idProveedor; let i = $index) {
+            <tr [class.alt]="i % 2 !== 0">
+              <td>
+                <div class="prov-cell">
+                  <div class="prov-icon"><span class="material-symbols-outlined">local_shipping</span></div>
+                  <div><div class="prov-name">{{ p.razonSocial }}</div><div class="prov-id">PID: {{ p.idProveedor }}00-S</div></div>
+                </div>
+              </td>
+              <td class="mono">{{ p.ruc }}</td>
+              <td class="text-dim">{{ p.telefono }}</td>
+              <td class="td-right">
+                <div class="row-actions">
+                  <button class="act-btn" (click)="editar(p)"><span class="material-symbols-outlined">edit</span></button>
+                  <button class="act-btn del" (click)="eliminar(p.idProveedor)"><span class="material-symbols-outlined">delete_outline</span></button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="4" class="empty-td">No hay proveedores</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="table-footer"><span class="table-count">{{ proveedores().length }} proveedores registrados</span></div>
+  </div>
+</div>
+
+@if (modalAbierto()) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-accent"></div>
+      <div class="modal-head"><h2>{{ editandoFlag() ? 'EDITAR' : 'NUEVO' }} PROVEEDOR</h2><button class="modal-close" (click)="cerrarModal()">×</button></div>
+      <form (ngSubmit)="guardar()" class="modal-body">
+        <div class="fg"><label>RAZÓN SOCIAL</label><input type="text" [(ngModel)]="form.razonSocial" name="razonSocial" required /></div>
+        <div class="fg-row">
+          <div class="fg"><label>RUC</label><input type="text" [(ngModel)]="form.ruc" name="ruc" required maxlength="11" /></div>
+          <div class="fg"><label>TELÉFONO</label><input type="text" [(ngModel)]="form.telefono" name="telefono" required /></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" (click)="cerrarModal()">CANCELAR</button>
+          <button type="submit" class="btn-cta"><span class="material-symbols-outlined">{{ editandoFlag() ? 'sync' : 'add' }}</span>{{ editandoFlag() ? 'ACTUALIZAR' : 'REGISTRAR' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

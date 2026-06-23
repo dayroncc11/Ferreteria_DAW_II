@@ -1,0 +1,12 @@
+com\ferreteria\clientes\entity\Cliente.class
+com\ferreteria\clientes\entity\Cliente$ClienteBuilder.class
+com\ferreteria\clientes\service\ClienteService.class
+com\ferreteria\clientes\service\impl\ClienteServiceImpl.class
+com\ferreteria\clientes\MsClientesApplication.class
+com\ferreteria\clientes\dto\ClienteResponse.class
+com\ferreteria\clientes\exception\GlobalExceptionHandler.class
+com\ferreteria\clientes\repository\ClienteRepository.class
+com\ferreteria\clientes\dto\ClienteRequest.class
+com\ferreteria\clientes\exception\ErrorResponse.class
+com\ferreteria\clientes\exception\ResourceNotFoundException.class
+com\ferreteria\clientes\controller\ClienteController.class

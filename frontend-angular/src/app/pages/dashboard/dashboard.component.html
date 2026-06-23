@@ -1,0 +1,142 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <span class="header-tag">RESUMEN // MÉTRICAS</span>
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-desc">FERRETERÍA MOLINA — PANEL CENTRAL SEC-00</p>
+    </div>
+    <div class="header-status">
+      <div class="status-pill">
+        <span class="dot green"></span>
+        <span>SISTEMA EN LÍNEA</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI Cards (Bento) -->
+  <div class="kpi-grid">
+    <div class="kpi-card accent-primary">
+      <div class="kpi-content">
+        <div class="kpi-label">Total Productos</div>
+        <div class="kpi-value">{{ totalProductos() }}</div>
+        <div class="kpi-trend">
+          <span class="material-symbols-outlined">inventory_2</span>
+          EN CATÁLOGO ACTIVO
+        </div>
+      </div>
+      <span class="material-symbols-outlined kpi-bg-icon">inventory_2</span>
+    </div>
+
+    <div class="kpi-card accent-tertiary">
+      <div class="kpi-content">
+        <div class="kpi-label">Ventas del Día</div>
+        <div class="kpi-value">{{ ventasHoy() }}</div>
+        <div class="kpi-trend tertiary">
+          <span class="material-symbols-outlined">trending_up</span>
+          TRANSACCIONES HOY
+        </div>
+      </div>
+      <span class="material-symbols-outlined kpi-bg-icon">point_of_sale</span>
+    </div>
+
+    <div class="kpi-card accent-secondary">
+      <div class="kpi-content">
+        <div class="kpi-label">Clientes Registro</div>
+        <div class="kpi-value">{{ totalClientes() }}</div>
+        <div class="kpi-trend secondary">
+          <span class="material-symbols-outlined">groups</span>
+          EN BASE DE DATOS
+        </div>
+      </div>
+      <span class="material-symbols-outlined kpi-bg-icon">groups</span>
+    </div>
+
+    <div class="kpi-card accent-error">
+      <div class="kpi-content">
+        <div class="kpi-label">Stock Bajo</div>
+        <div class="kpi-value">{{ productosStockBajo().length }}</div>
+        <div class="kpi-trend error">
+          <span class="material-symbols-outlined">warning</span>
+          REQUIEREN ATENCIÓN
+        </div>
+      </div>
+      <span class="material-symbols-outlined kpi-bg-icon">warning</span>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <!-- Ingresos del día -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3 class="panel-title">
+          <span class="accent-bar"></span>
+          Ingresos de Hoy
+        </h3>
+        <span class="panel-badge active">ACTIVO</span>
+      </div>
+      <div class="revenue-value">S/ {{ ingresoHoy().toFixed(2) }}</div>
+      <p class="revenue-label">Total acumulado del día</p>
+    </div>
+
+    <!-- Stock Bajo Alert -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3 class="panel-title">
+          <span class="accent-bar error"></span>
+          Productos con Stock Bajo
+        </h3>
+        <span class="panel-badge alert">ALERTA</span>
+      </div>
+      <div class="stock-list">
+        @for (p of productosStockBajo(); track p.idProducto) {
+        <div class="stock-item">
+          <div>
+            <span class="stock-name">{{ p.nombre }}</span>
+            <span class="stock-sku">SKU: PRD-{{ p.idProducto }}</span>
+          </div>
+          <span class="stock-count" [class.critical]="p.stock <= 3">{{ p.stock }} uds</span>
+        </div>
+        } @empty {
+        <p class="empty-msg">Sin alertas de stock</p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Últimas Ventas Table -->
+  <div class="table-panel">
+    <div class="panel-header">
+      <h3 class="panel-title">
+        <span class="accent-bar"></span>
+        Últimas Ventas
+      </h3>
+      <span class="table-meta">ÚLTIMAS {{ ultimasVentas().length }} TRANSACCIONES</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>FECHA</th>
+            <th>CLIENTE</th>
+            <th>TOTAL</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (v of ultimasVentas(); track v.idVenta) {
+          <tr>
+            <td><span class="id-tag">TXN-{{ v.idVenta }}</span></td>
+            <td class="mono">{{ v.fecha }}</td>
+            <td>{{ getClienteNombre(v.idCliente) }}</td>
+            <td class="total-cell">S/ {{ v.total.toFixed(2) }}</td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="4" class="empty-td">Sin ventas registradas</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

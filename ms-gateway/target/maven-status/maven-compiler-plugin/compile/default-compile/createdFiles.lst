@@ -1,0 +1,3 @@
+com\ferreteria\gateway\MsGatewayApplication.class
+com\ferreteria\gateway\filter\JwtAuthGatewayFilter.class
+com\ferreteria\gateway\config\GatewayConfig.class

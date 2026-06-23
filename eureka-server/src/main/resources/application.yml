@@ -1,0 +1,21 @@
+server:
+  port: 8761
+
+spring:
+  application:
+    name: eureka-server
+
+eureka:
+  client:
+    # El servidor Eureka NO debe registrarse a sí mismo
+    register-with-eureka: false
+    # Tampoco necesita buscar otros servicios
+    fetch-registry: false
+  server:
+    # Tiempo de espera antes de eliminar instancias que no responden (ms)
+    eviction-interval-timer-in-ms: 5000
+
+logging:
+  level:
+    com.netflix.eureka: WARN
+    com.netflix.discovery: WARN

@@ -1,0 +1,174 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <span class="header-tag">REGISTRO // BASE DE DATOS</span>
+      <h1 class="page-title">Directorio de Clientes</h1>
+      <p class="page-desc">FERRETERÍA MOLINA — BASE DE DATOS SEC-02</p>
+    </div>
+    <button class="btn-cta" (click)="abrirModal()">
+      <span class="material-symbols-outlined">person_add</span>
+      REGISTRAR CLIENTE
+    </button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card accent-primary">
+      <div class="stat-label">TOTAL REGISTRADOS</div>
+      <div class="stat-value">{{ clientes().length }}</div>
+      <span class="material-symbols-outlined stat-bg">groups</span>
+    </div>
+    <div class="stat-card accent-tertiary">
+      <div class="stat-label">CLIENTES ACTIVOS</div>
+      <div class="stat-value">{{ clientesActivos() }}</div>
+      <span class="material-symbols-outlined stat-bg">verified</span>
+    </div>
+    <div class="stat-card accent-error">
+      <div class="stat-label">CLIENTES INACTIVOS</div>
+      <div class="stat-value">{{ clientes().length - clientesActivos() }}</div>
+      <span class="material-symbols-outlined stat-bg">person_off</span>
+    </div>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <div class="filter-left">
+      <span class="filter-label">VISTA DE DATOS</span>
+      <div class="filter-tabs">
+        <button class="filter-tab" [class.active]="filtroEstado==='todos'" (click)="filtroEstado='todos';filtrar()">TODOS</button>
+        <button class="filter-tab" [class.active]="filtroEstado==='activos'" (click)="filtroEstado='activos';filtrar()">ACTIVOS</button>
+        <button class="filter-tab" [class.active]="filtroEstado==='inactivos'" (click)="filtroEstado='inactivos';filtrar()">INACTIVOS</button>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <span class="material-symbols-outlined">filter_list</span>
+      <input type="text" placeholder="BUSCAR NOMBRE O DNI..." [(ngModel)]="busqueda" (input)="filtrar()" />
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-panel">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>PERFIL DEL CLIENTE</th>
+            <th>DNI</th>
+            <th>DIRECCIÓN</th>
+            <th>TELÉFONO</th>
+            <th>ESTADO</th>
+            <th class="th-right">OPERACIONES</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of clientesFiltrados(); track c.idCliente; let i = $index) {
+            <tr [class.alt]="i % 2 !== 0" [class.inactive-row]="!c.activo">
+              <td>
+                <div class="client-cell">
+                  <div class="client-avatar" [class.active]="c.activo" [class.inactive]="!c.activo">{{ c.nombre.charAt(0) }}{{ c.nombre.split(' ')[1]?.charAt(0) || '' }}</div>
+                  <div>
+                    <div class="client-name" [class.dim]="!c.activo">{{ c.nombre }}</div>
+                    <div class="client-cid">CID: {{ c.idCliente }}0-X</div>
+                  </div>
+                </div>
+              </td>
+              <td class="mono">{{ c.dni }}</td>
+              <td class="text-dim">{{ c.direccion }}</td>
+              <td class="text-dim">{{ c.telefono }}</td>
+              <td>
+                <span class="status-badge" [class.activo]="c.activo" [class.inactivo]="!c.activo">
+                  <span class="status-dot"></span>
+                  {{ c.activo ? 'ACTIVO' : 'INACTIVO' }}
+                </span>
+              </td>
+              <td class="td-right">
+                <div class="row-actions always-visible">
+                  <button class="act-btn" title="Editar" (click)="editar(c)"><span class="material-symbols-outlined">edit</span></button>
+                  <button class="act-btn toggle" [title]="c.activo ? 'Desactivar' : 'Activar'" (click)="toggleEstado(c)">
+                    <span class="material-symbols-outlined">{{ c.activo ? 'person_off' : 'person' }}</span>
+                  </button>
+                  <button class="act-btn del" title="Eliminar" (click)="eliminar(c.idCliente)"><span class="material-symbols-outlined">delete_outline</span></button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="6" class="empty-td">No se encontraron clientes</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="table-footer">
+      <span class="table-count">Mostrando {{ clientesFiltrados().length }} de {{ clientes().length }} registros</span>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+@if (modalAbierto()) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-accent"></div>
+      <div class="modal-head">
+        <h2>{{ editandoFlag() ? 'EDITAR' : 'REGISTRAR' }} CLIENTE</h2>
+        <button class="modal-close" (click)="cerrarModal()">×</button>
+      </div>
+      <form (ngSubmit)="guardar()" class="modal-body">
+        <div class="fg">
+          <label>NOMBRE COMPLETO <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="form.nombre" name="nombre"
+                 [class.input-error]="submitted && !form.nombre.trim()"
+                 placeholder="Ingrese nombre completo" />
+          @if (submitted && !form.nombre.trim()) {
+            <span class="field-error">El nombre es obligatorio</span>
+          }
+        </div>
+        <div class="fg-row">
+          <div class="fg">
+            <label>DNI <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="form.dni" name="dni" maxlength="8"
+                   [class.input-error]="submitted && (!form.dni.trim() || form.dni.trim().length !== 8)"
+                   placeholder="8 dígitos" />
+            @if (submitted && !form.dni.trim()) {
+              <span class="field-error">El DNI es obligatorio</span>
+            } @else if (submitted && form.dni.trim().length !== 8) {
+              <span class="field-error">El DNI debe tener 8 dígitos</span>
+            }
+          </div>
+          <div class="fg">
+            <label>TELÉFONO <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="form.telefono" name="telefono" maxlength="9"
+                   [class.input-error]="submitted && !form.telefono.trim()"
+                   placeholder="Número de contacto" />
+            @if (submitted && !form.telefono.trim()) {
+              <span class="field-error">El teléfono es obligatorio</span>
+            }
+          </div>
+        </div>
+        <div class="fg">
+          <label>DIRECCIÓN <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="form.direccion" name="direccion"
+                 [class.input-error]="submitted && !form.direccion.trim()"
+                 placeholder="Dirección completa" />
+          @if (submitted && !form.direccion.trim()) {
+            <span class="field-error">La dirección es obligatoria</span>
+          }
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" (click)="cerrarModal()">CANCELAR</button>
+          <button type="submit" class="btn-cta">
+            <span class="material-symbols-outlined">{{ editandoFlag() ? 'sync' : 'person_add' }}</span>
+            {{ editandoFlag() ? 'ACTUALIZAR' : 'REGISTRAR' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- Toast -->
+@if (toast()) {
+  <div class="toast" [class.success]="toastType()==='success'" [class.error]="toastType()==='error'" [class.warning]="toastType()==='warning'">
+    <span class="material-symbols-outlined">{{ toastIcon() }}</span>
+    {{ toast() }}
+  </div>
+}

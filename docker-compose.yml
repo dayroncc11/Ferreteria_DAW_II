@@ -1,0 +1,221 @@
+version: '3.8'
+
+# ══════════════════════════════════════════════════════════════════════════
+#  docker-compose.yml — Ferretería Molina (Sistema Completo)
+#
+#  Incluye TODO: Java, MySQL, todos los microservicios
+#  Solo necesitas: Docker Desktop instalado
+#
+#  Iniciar:    docker compose up -d --build
+#  Detener:    docker compose down
+#  Ver logs:   docker compose logs -f [servicio]
+#  Rebuild:    docker compose up -d --build [servicio]
+# ══════════════════════════════════════════════════════════════════════════
+
+# Variables reutilizables
+x-eureka-url: &eureka-url
+  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+  EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
+
+x-db-config: &db-config
+  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/ferreteria?useSSL=false&serverTimezone=America/Lima&allowPublicKeyRetrieval=true"
+  SPRING_DATASOURCE_USERNAME: root
+  SPRING_DATASOURCE_PASSWORD: "123456"
+  SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+
+services:
+
+  # ════════════════════════════════════════════════════════════
+  #  INFRAESTRUCTURA
+  # ════════════════════════════════════════════════════════════
+
+  # ─── MySQL 8 ─────────────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: ferreteria-mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_DATABASE: ferreteria
+      MYSQL_ROOT_HOST: "%"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./DB_FERRETERIA.sql:/docker-entrypoint-initdb.d/01_init.sql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p123456" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+
+  # ════════════════════════════════════════════════════════════
+  #  MICROSERVICIOS — Spring Boot (Java 17 incluido en la imagen)
+  # ════════════════════════════════════════════════════════════
+
+  # ─── 1. Eureka Server (Registro de servicios) ────────────
+  eureka-server:
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    container_name: ferreteria-eureka
+    ports:
+      - "8761:8761"
+    environment:
+      EUREKA_CLIENT_REGISTER_WITH_EUREKA: "false"
+      EUREKA_CLIENT_FETCH_REGISTRY: "false"
+      SERVER_PORT: 8761
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q --spider http://localhost:8761/actuator/health 2>&1 || wget -q --spider http://localhost:8761/ 2>&1 || exit 0" ]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+
+  # ─── 1.5. Config Server ──────────────────────────────────
+  config-server:
+    build:
+      context: ./config-server
+      dockerfile: Dockerfile
+    container_name: ferreteria-config-server
+    ports:
+      - "8888:8888"
+    depends_on:
+      eureka-server:
+        condition: service_started
+    environment:
+      <<: *eureka-url
+      SERVER_PORT: 8888
+    restart: unless-stopped
+
+  # ─── 2. ms-auth (Login + Usuarios) ───────────────────────
+  ms-auth:
+    build:
+      context: ./ms-auth
+      dockerfile: Dockerfile
+    container_name: ferreteria-ms-auth
+    ports:
+      - "8090:8090"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+      config-server:
+        condition: service_started
+    environment:
+      <<: [ *db-config, *eureka-url ]
+      SERVER_PORT: 8090
+      APP_JWT_SECRET: ZmVycmV0ZXJpYS1tb2xpbmEtc2VjcmV0LWtleS1zdXBlci1zZWd1cmEtMjAyNg==
+      APP_JWT_EXPIRATION: 86400000
+    restart: unless-stopped
+
+  # ─── 3. ms-clientes (CRUD Clientes) ──────────────────────
+  ms-clientes:
+    build:
+      context: ./ms-clientes
+      dockerfile: Dockerfile
+    container_name: ferreteria-ms-clientes
+    ports:
+      - "8093:8093"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+      config-server:
+        condition: service_started
+    environment:
+      <<: [ *db-config, *eureka-url ]
+      SERVER_PORT: 8093
+    restart: unless-stopped
+
+  # ─── 4. ms-productos (CRUD Productos + Stock) ────────────
+  ms-productos:
+    build:
+      context: ./ms-productos
+      dockerfile: Dockerfile
+    container_name: ferreteria-ms-productos
+    ports:
+      - "8091:8091"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+      config-server:
+        condition: service_started
+    environment:
+      <<: [ *db-config, *eureka-url ]
+      SERVER_PORT: 8091
+    restart: unless-stopped
+
+  # ─── 5. ms-ventas (Ventas + Devoluciones + Feign) ────────
+  ms-ventas:
+    build:
+      context: ./ms-ventas
+      dockerfile: Dockerfile
+    container_name: ferreteria-ms-ventas
+    ports:
+      - "8092:8092"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+      config-server:
+        condition: service_started
+    environment:
+      <<: [ *db-config, *eureka-url ]
+      SERVER_PORT: 8092
+    restart: unless-stopped
+
+  # ─── 6. frontend-angular (UI) ────────────────────────────
+  frontend-angular:
+    build:
+      context: ./frontend-angular
+      dockerfile: Dockerfile
+    container_name: ferreteria-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      ms-gateway:
+        condition: service_started
+    restart: unless-stopped
+
+  # ─── 7. ms-gateway (Punto de entrada único) ──────────────
+  ms-gateway:
+    build:
+      context: ./ms-gateway
+      dockerfile: Dockerfile
+    container_name: ferreteria-ms-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      eureka-server:
+        condition: service_started
+      config-server:
+        condition: service_started
+      ms-auth:
+        condition: service_started
+      ms-clientes:
+        condition: service_started
+      ms-productos:
+        condition: service_started
+      ms-ventas:
+        condition: service_started
+    environment:
+      <<: *eureka-url
+      SERVER_PORT: 8080
+      APP_JWT_SECRET: ZmVycmV0ZXJpYS1tb2xpbmEtc2VjcmV0LWtleS1zdXBlci1zZWd1cmEtMjAyNg==
+    restart: unless-stopped
+
+# ════════════════════════════════════════════════════════════
+#  VOLÚMENES — persisten los datos entre reinicios
+# ════════════════════════════════════════════════════════════
+volumes:
+  mysql_data: # datos de MySQL (BD ferreteria)

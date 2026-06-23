@@ -1,0 +1,195 @@
+.page { animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.page-header {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; margin-bottom: 2rem;
+}
+.header-tag {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.6rem; letter-spacing: 0.3em;
+  text-transform: uppercase; color: #ffb693;
+  display: block; margin-bottom: 0.35rem;
+}
+.page-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem; font-weight: 800;
+  color: #e2e2e6; margin: 0;
+  letter-spacing: -0.02em; text-transform: uppercase;
+}
+.page-desc {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.65rem; color: rgba(226, 226, 230, 0.35);
+  letter-spacing: 0.15em; text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+.status-pill {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  background: #282a2d; border: 1px solid rgba(90, 65, 54, 0.2);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.55rem; color: rgba(226, 226, 230, 0.5);
+  letter-spacing: 0.15em; text-transform: uppercase;
+}
+.dot { width: 6px; height: 6px; border-radius: 50%; }
+.dot.green { background: #00ff88; box-shadow: 0 0 8px rgba(0, 255, 136, 0.4); }
+
+/* KPI Grid */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem; margin-bottom: 1.5rem;
+}
+.kpi-card {
+  background: #282a2d; padding: 1.5rem;
+  position: relative; overflow: hidden;
+  border-left: 2px solid transparent;
+}
+.kpi-card.accent-primary { border-color: #ff6b00; }
+.kpi-card.accent-tertiary { border-color: #059eff; }
+.kpi-card.accent-secondary { border-color: #b9c7df; }
+.kpi-card.accent-error { border-color: #ffb4ab; }
+.kpi-content { position: relative; z-index: 1; }
+.kpi-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.55rem; letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(226, 226, 230, 0.35);
+  margin-bottom: 0.35rem;
+}
+.kpi-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2.5rem; font-weight: 800;
+  color: #e2e2e6; line-height: 1;
+}
+.kpi-trend {
+  display: flex; align-items: center; gap: 0.35rem;
+  margin-top: 0.5rem;
+  font-size: 0.55rem; font-weight: 700;
+  color: #ff6b00;
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: 0.1em;
+}
+.kpi-trend.tertiary { color: #059eff; }
+.kpi-trend.secondary { color: #b9c7df; }
+.kpi-trend.error { color: #ffb4ab; }
+.kpi-trend .material-symbols-outlined { font-size: 0.8rem; }
+.kpi-bg-icon {
+  position: absolute; right: -0.5rem; bottom: -0.5rem;
+  font-size: 5rem; color: rgba(226, 226, 230, 0.03);
+  transform: rotate(12deg);
+}
+
+/* Content grid */
+.content-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.25rem; margin-bottom: 1.5rem;
+}
+.panel {
+  background: #1a1c1f;
+  border: 1px solid rgba(90, 65, 54, 0.1);
+  padding: 1.5rem;
+}
+.panel-header {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 1rem;
+}
+.panel-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem; font-weight: 700;
+  color: #e2e2e6; margin: 0;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.accent-bar { width: 8px; height: 8px; background: #ff6b00; }
+.accent-bar.error { background: #ffb4ab; }
+.panel-badge {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.5rem; font-weight: 700;
+  padding: 0.2rem 0.5rem; letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.panel-badge.active {
+  background: rgba(0, 255, 136, 0.1); color: #00ff88;
+  border: 1px solid rgba(0, 255, 136, 0.2);
+}
+.panel-badge.alert {
+  background: rgba(255, 180, 171, 0.1); color: #ffb4ab;
+  border: 1px solid rgba(255, 180, 171, 0.2);
+}
+.revenue-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2.5rem; font-weight: 900;
+  color: #00ff88; margin: 1rem 0 0.25rem;
+}
+.revenue-label {
+  font-size: 0.65rem; color: rgba(226, 226, 230, 0.35);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.stock-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.stock-item {
+  display: flex; justify-content: space-between;
+  align-items: center; padding: 0.6rem 0.75rem;
+  background: #111316; border: 1px solid rgba(90, 65, 54, 0.08);
+}
+.stock-name {
+  font-size: 0.8rem; color: #e2e2e6; font-weight: 500; display: block;
+}
+.stock-sku {
+  font-size: 0.55rem; color: rgba(226, 226, 230, 0.3);
+  font-family: monospace;
+}
+.stock-count {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem; font-weight: 700;
+  color: #ffb693; background: rgba(255, 182, 147, 0.1);
+  border: 1px solid rgba(255, 182, 147, 0.2);
+  padding: 0.2rem 0.5rem;
+}
+.stock-count.critical { color: #ffb4ab; background: rgba(147, 0, 10, 0.15); border-color: rgba(255, 180, 171, 0.2); }
+.empty-msg { font-size: 0.75rem; color: rgba(226, 226, 230, 0.3); text-align: center; padding: 1rem; }
+
+/* Table */
+.table-panel {
+  background: #0c0e11;
+  border: 1px solid rgba(90, 65, 54, 0.1);
+  overflow: hidden;
+}
+.table-panel .panel-header { padding: 1rem 1.5rem; border-bottom: 1px solid rgba(90, 65, 54, 0.1); }
+.table-meta {
+  font-family: monospace; font-size: 0.55rem;
+  color: rgba(226, 226, 230, 0.3);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+thead tr {
+  background: #1a1c1f;
+}
+thead th {
+  padding: 0.85rem 1.5rem; text-align: left;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.55rem; font-weight: 500;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(226, 226, 230, 0.35);
+  border-bottom: 1px solid rgba(90, 65, 54, 0.08);
+}
+tbody tr { transition: background 0.15s; }
+tbody tr:hover { background: #1e2023; }
+tbody td {
+  padding: 0.85rem 1.5rem; font-size: 0.8rem;
+  color: rgba(226, 226, 230, 0.7);
+  border-bottom: 1px solid rgba(90, 65, 54, 0.04);
+}
+.id-tag {
+  font-family: monospace; font-size: 0.7rem;
+  color: #ffb693; background: rgba(255, 182, 147, 0.08);
+  border: 1px solid rgba(255, 182, 147, 0.15);
+  padding: 0.15rem 0.4rem;
+}
+.mono { font-family: monospace; font-size: 0.75rem; }
+.total-cell {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700; color: #00ff88;
+}
+.empty-td { text-align: center; color: rgba(226, 226, 230, 0.3); padding: 2rem !important; }

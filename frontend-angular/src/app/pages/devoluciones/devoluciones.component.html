@@ -1,0 +1,123 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <span class="header-tag">MÓDULO: DEV-449 // SISTEMA ACTIVO</span>
+      <h1 class="page-title">Procesamiento de Devoluciones</h1>
+      <p class="page-desc">FERRETERÍA MOLINA — GESTIÓN DE DEVOLUCIONES SEC-05</p>
+    </div>
+    <div class="header-right">
+      <div class="status-pill"><span class="dot"></span>WORKSTATION-C4</div>
+      <button class="btn-cta" (click)="abrirModal()"><span class="material-symbols-outlined">sync_alt</span>NUEVA DEVOLUCIÓN</button>
+    </div>
+  </div>
+
+  <div class="grid-layout">
+    <!-- Main: Table -->
+    <div class="main-col">
+      <div class="table-panel">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID DEVOLUCIÓN</th>
+                <th>VENTA ORIGINAL</th>
+                <th>CLIENTE</th>
+                <th>FECHA</th>
+                <th>MOTIVO</th>
+                <th>MONTO</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (d of devoluciones(); track d.idDevolucion; let i = $index) {
+                <tr [class.alt]="i % 2 !== 0">
+                  <td><span class="id-tag">RTN-{{ d.idDevolucion }}</span></td>
+                  <td><span class="venta-tag">TXN-{{ d.idVenta }}</span></td>
+                  <td>{{ getClienteDeVenta(d.idVenta) }}</td>
+                  <td class="mono">{{ d.fecha }}</td>
+                  <td class="motivo">{{ d.motivo }}</td>
+                  <td class="refund-cell">-S/ {{ getMontoVenta(d.idVenta).toFixed(2) }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="6" class="empty-td">Sin devoluciones registradas</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Info cards -->
+      <div class="info-cards">
+        <div class="info-card">
+          <span class="material-symbols-outlined info-bg">history</span>
+          <div class="info-label">Total Devoluciones</div>
+          <div class="info-value">{{ devoluciones().length }}</div>
+        </div>
+        <div class="info-card">
+          <span class="material-symbols-outlined info-bg">verified_user</span>
+          <div class="info-label">Ventas Disponibles</div>
+          <div class="info-value green">{{ ventasDisponibles().length }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (modalAbierto()) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-accent"></div>
+      <div class="modal-head">
+        <h2>REGISTRAR DEVOLUCIÓN</h2>
+        <span class="await-tag">ESPERANDO_DATOS</span>
+      </div>
+      <form (ngSubmit)="guardar()" class="modal-body">
+        <div class="fg">
+          <label>SELECCIONAR TRANSACCIÓN</label>
+          <select [(ngModel)]="ventaSeleccionada" name="venta" required>
+            <option [ngValue]="0" disabled>Seleccione una venta...</option>
+            @for (v of ventasDisponibles(); track v.idVenta) {
+              <option [ngValue]="v.idVenta">TXN-{{ v.idVenta }} — {{ v.fecha }} — S/ {{ v.total.toFixed(2) }} — {{ getClienteDeVenta(v.idVenta) }}</option>
+            }
+          </select>
+        </div>
+        <div class="fg">
+          <label>MOTIVO DE DEVOLUCIÓN</label>
+          <select [(ngModel)]="tipoMotivo" name="tipoMotivo">
+            <option value="Defectuoso / No funcional">Defectuoso / No funcional</option>
+            <option value="Producto incorrecto">Producto incorrecto</option>
+            <option value="Cliente cambió de opinión">Cliente cambió de opinión</option>
+            <option value="Garantía">Garantía</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>NOTAS TÉCNICAS</label>
+          <textarea [(ngModel)]="motivo" name="motivo" required rows="3" placeholder="Especifique el fallo técnico o los detalles del daño..."></textarea>
+        </div>
+
+        @if (ventaSeleccionada) {
+          <div class="refund-summary">
+            <div class="refund-row"><span>Subtotal Reembolso:</span><span class="mono">S/ {{ getMontoVenta(ventaSeleccionada).toFixed(2) }}</span></div>
+            <div class="refund-row main"><span>TOTAL REEMBOLSO</span><span class="refund-big">S/ {{ getMontoVenta(ventaSeleccionada).toFixed(2) }}</span></div>
+          </div>
+        }
+
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" (click)="cerrarModal()">CANCELAR</button>
+          <button type="submit" class="btn-return" [disabled]="ventaSeleccionada === 0 || !motivo.trim()">
+            <span class="material-symbols-outlined">sync_alt</span>
+            PROCESAR DEVOLUCIÓN
+            <div class="btn-shine"></div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+@if (exitoso()) {
+  <div class="toast-success">
+    <span class="material-symbols-outlined">check_circle</span>
+    DEVOLUCIÓN PROCESADA — STOCK RESTABLECIDO
+  </div>
+}

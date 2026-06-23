@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: ms-productos
+  config:
+    import: "optional:configserver:http://localhost:8888"
