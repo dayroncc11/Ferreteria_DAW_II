@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, signal } from '@angular/core';
 import { Observable, catchError, map, of, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 /**
  * Respuesta del backend al hacer login.
@@ -38,7 +39,7 @@ interface UsuarioSesion {
  */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:8080/api/auth';
+  private readonly apiUrl = `${environment.apiUrl}/auth`;
 
   // Signal con los datos del usuario actual (null si no está autenticado)
   private currentUser = signal<UsuarioSesion | null>(null);
@@ -59,7 +60,7 @@ export class AuthService {
    * @returns Observable<boolean> — true si login exitoso, false si falló
    */
   login(correo: string, contrasena: string): Observable<string | null> {
-    return this.http.post<any>('http://localhost:8080/api/auth/login', { correo, contrasena }).pipe(
+    return this.http.post<any>(`${this.apiUrl}/login`, { correo, contrasena }).pipe(
       tap((res) => {
         localStorage.setItem('token', res.token);
         // decodificar token y setear info

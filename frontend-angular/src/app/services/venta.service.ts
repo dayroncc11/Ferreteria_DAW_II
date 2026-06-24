@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Venta } from '../models/venta.model';
 import { DetalleVenta } from '../models/detalle-venta.model';
+import { environment } from '../../environments/environment';
 
 export interface ItemCarrito {
   idProducto: number;
@@ -14,7 +15,7 @@ export interface ItemCarrito {
 
 @Injectable({ providedIn: 'root' })
 export class VentaService {
-  private readonly apiUrl = 'http://localhost:8080/api/ventas';
+  private readonly apiUrl = `${environment.apiUrl}/ventas`;
 
   constructor(private http: HttpClient) {}
 

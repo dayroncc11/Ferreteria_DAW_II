@@ -2,10 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Devolucion } from '../models/devolucion.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class DevolucionService {
-  private readonly apiUrl = 'http://localhost:8080/api/devoluciones';
+  private readonly apiUrl = `${environment.apiUrl}/devoluciones`;
 
   constructor(private http: HttpClient) {}
 
