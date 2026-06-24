@@ -5,7 +5,7 @@ eureka:
       defaultZone: ${EUREKA_URL}
   instance:
     hostname: ${RAILWAY_PUBLIC_DOMAIN}
-    preferIpAddress: ${EUREKA_PREFER_IP:true}
+    preferIpAddress: ${EUREKA_PREFER_IP:false}
     nonSecurePort: ${PORT}
     lease-expiration-duration-in-seconds: 15
     lease-renewal-interval-in-seconds: 5
