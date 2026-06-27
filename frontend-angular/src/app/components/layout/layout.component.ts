@@ -45,6 +45,11 @@ import { HeaderComponent } from './header/header.component';
       border-left: 2px solid rgba(255, 107, 0, 0.4);
       pointer-events: none; z-index: 60;
     }
+    @media (max-width: 768px) {
+      .main-content { margin-left: 60px; padding: 1rem; }
+      .corner-bl { left: 76px; }
+      .corner-tr { right: 0.5rem; top: 4.5rem; }
+    }
   `]
 })
 export class LayoutComponent {}

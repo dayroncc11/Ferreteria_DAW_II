@@ -75,3 +75,27 @@ body {
   background: rgba(255, 107, 0, 0.3);
   color: #e2e2e6;
 }
+
+/* Responsive Tables & Layout Overrides */
+@media (max-width: 768px) {
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-wrap table {
+    min-width: 700px;
+  }
+  
+  /* Component layout overrides */
+  .fg-row, .content-grid, .info-cards {
+    grid-template-columns: 1fr !important;
+  }
+  .page-header, .filter-bar {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem !important;
+  }
+  .filter-left, .filter-tabs {
+    flex-wrap: wrap !important;
+  }
+}

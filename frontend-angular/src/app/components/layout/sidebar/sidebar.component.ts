@@ -161,6 +161,17 @@ import { AuthService } from '../../../services/auth.service';
       border-color: rgba(255, 107, 0, 0.3);
     }
     .btn-logout .material-symbols-outlined { font-size: 0.9rem; }
+    @media (max-width: 768px) {
+      .sidebar { width: 60px; padding-top: 5rem; }
+      .sidebar-brand { padding: 0; justify-content: center; margin-bottom: 1.5rem; }
+      .brand-title, .brand-subtitle, .nav-text, .footer-link span:not(.material-symbols-outlined) { display: none; }
+      .nav-link { justify-content: center; padding: 0.75rem 0; }
+      .nav-link .material-symbols-outlined { font-size: 1.3rem; margin: 0; }
+      .footer-link { justify-content: center; padding: 0.75rem 0; }
+      .footer-link .material-symbols-outlined { font-size: 1.2rem; }
+      .btn-logout { font-size: 0; padding: 0.75rem 0; justify-content: center; color: transparent; }
+      .btn-logout .material-symbols-outlined { margin: 0; color: #ffb693; }
+    }
   `]
 })
 export class SidebarComponent {

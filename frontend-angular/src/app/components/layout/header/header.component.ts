@@ -162,6 +162,15 @@ import { Producto } from '../../../models/producto.model';
       width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
       border: 1px solid rgba(255, 182, 147, 0.3);
     }
+    @media (max-width: 768px) {
+      .top-header { padding: 0 1rem; }
+      .brand { display: none; }
+      .search-input { width: 130px; }
+      .user-info-text { display: none; }
+      .header-left { gap: 0.5rem; }
+      .global-search { padding: 0.3rem 0.5rem; }
+      .search-results { width: 300px; }
+    }
   `]
 })
 export class HeaderComponent {
