@@ -78,7 +78,10 @@ export class AuthService {
       map(() => null),
       catchError((err: any) => {
         console.error('Login Error:', err);
-        return of(err.message + ' (Status: ' + err.status + ')');
+        if (err.status === 400 || err.status === 401) {
+          return of('Usuario o contraseña incorrectos');
+        }
+        return of('Error en el servidor. Intente más tarde.');
       })
     );
   }
