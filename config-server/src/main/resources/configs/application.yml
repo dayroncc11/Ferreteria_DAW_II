@@ -4,11 +4,14 @@ eureka:
     service-url:
       defaultZone: ${EUREKA_URL}
   instance:
-    hostname: ${RAILWAY_PRIVATE_DOMAIN:${RAILWAY_PUBLIC_DOMAIN:localhost}}
+    hostname: ${RAILWAY_PRIVATE_DOMAIN:localhost}
     preferIpAddress: false
     nonSecurePort: ${PORT:8080}
     lease-expiration-duration-in-seconds: 15
     lease-renewal-interval-in-seconds: 5
+
+server:
+  address: '::'
 
 mensaje:
   global: "Configuracion entregada por el Config Server - Ferreteria Molina"
