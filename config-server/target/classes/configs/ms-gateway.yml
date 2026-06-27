@@ -20,29 +20,29 @@ spring:
             allowedHeaders: "*"
             allowCredentials: true
 
-      # Rutas
+      # Rutas — URLs públicas directas (bypass private networking)
       routes:
         # ms-auth: login público + gestión de usuarios (protegido)
         - id: ms-auth-route
-          uri: lb://ms-auth
+          uri: https://ms-auth-production-a876.up.railway.app
           predicates:
             - Path=/api/auth/**, /api/usuarios/**
 
         # ms-clientes: gestión de clientes
         - id: ms-clientes-route
-          uri: lb://ms-clientes
+          uri: https://ms-clientes-production-3bda.up.railway.app
           predicates:
             - Path=/api/clientes/**
 
         # ms-productos: productos y proveedores
         - id: ms-productos-route
-          uri: lb://ms-productos
+          uri: https://ms-productos-production-f739.up.railway.app
           predicates:
             - Path=/api/productos/**, /api/proveedores/**
 
         # ms-ventas: ventas y devoluciones
         - id: ms-ventas-route
-          uri: lb://ms-ventas
+          uri: https://ms-ventas-production-0d89.up.railway.app
           predicates:
             - Path=/api/ventas/**, /api/devoluciones/**
 
