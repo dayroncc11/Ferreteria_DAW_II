@@ -76,7 +76,8 @@ CREATE TABLE IF NOT EXISTS devolucion (
 
 INSERT IGNORE INTO usuario (id, username, clave, rol, nombre, correo) VALUES
 (1, 'admin', '$2a$10$nS1ZoavMNzmAdO8xXav1vuFDsnQCE6NPVVpYKudqI7EHrSAGGYA12', 'admin', 'Administrador', 'admin@ferreteria.com'),
-(2, 'empleado1', '$2a$10$QO6T4HgzqLqubLGhuelfeumrA6ZNl6tnHF4fmi4QbtO5W3yWeLASG', 'empleado','Carlos Mendoza', 'carlos@ferreteria.com');
+(2, 'empleado1', '$2a$10$QO6T4HgzqLqubLGhuelfeumrA6ZNl6tnHF4fmi4QbtO5W3yWeLASG', 'empleado','Carlos Mendoza', 'carlos@ferreteria.com'),
+(3, 'admin1', '$2a$10$7himfwhQ98AIqGcQ3nKEMOSTiyK3wwtPNivmz8dnOr0cOs3m7TCum', 'admin', 'Dayron Jesus', 'daycc11@ferreteria.com');
 
 INSERT IGNORE INTO proveedor (id, nombre, ruc, telefono) VALUES
 (1, 'Distribuidora Aceros del Sur S.A.C.', '20512345678', '01-4567890'),
